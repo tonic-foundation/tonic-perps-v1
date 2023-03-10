@@ -1,0 +1,48 @@
+{
+  "name": "tonic-perpetuals",
+  "version": "1.0.0",
+  "description": "Compiles Tonic perpetuals and sdk contract",
+  "scripts": {
+    "build": "rustup target add wasm32-unknown-unknown && cargo build --target wasm32-unknown-unknown --release --workspace --exclude tonic-perps-indexer",
+    "postbuild": "mkdir -p res && cp ./target/wasm32-unknown-unknown/release/*.wasm ./res",
+    "deploy:dev": "npm run build && near dev-deploy res/template_contract.wasm",
+    "dev": "npm run deploy:dev && npm start",
+    "test": "npm run test:unit && npm run test:integration",
+    "test:unit": "cargo test -- --nocapture",
+    "test:integration": "npm run test:integration:ts",
+    "test:integration:ts": "npm run build && npm run postbuild && ava --verbose"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/near-examples/rust-status-message.git"
+  },
+  "keywords": [
+    "near-protocol",
+    "blockchain",
+    "rust",
+    "smart-contract"
+  ],
+  "author": "Mike Purvis",
+  "license": "(MIT AND Apache-2.0)",
+  "bugs": {
+    "url": "https://github.com/near-examples/rust-status-message/issues"
+  },
+  "homepage": "https://github.com/near-examples/rust-status-message#readme",
+  "dependencies": {
+    "big.js": "^5.2.2",
+    "borsh": "^0.4.0",
+    "env-cmd": "^10.1.0",
+    "near-api-js": "^0.43.1",
+    "regenerator-runtime": "^0.13.9",
+    "yarn": "^1.22.19"
+  },
+  "devDependencies": {
+    "ava": "^4.2.0",
+    "cssnano": "^5.0.7",
+    "gh-pages": "^3.1.0",
+    "near-workspaces": "^3.1.0",
+    "ts-node": "^10.7.0",
+    "typescript": "^4.6.4"
+  },
+  "packageManager": "yarn@3.2.3"
+}

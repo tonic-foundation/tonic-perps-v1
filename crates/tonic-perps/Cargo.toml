@@ -1,0 +1,24 @@
+[package]
+name = "tonic-perps"
+version = "0.1.0"
+authors = []
+edition = "2018"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+uint = { version = "0.9.0", default-features = false }
+serde = { version = "*", features = ["derive"] }
+serde_json = "*"
+near-sdk = "4.0.0"
+near-contract-standards = "4.0.0"
+sbv2-near = "0.1.0"
+
+tonic-perps-sdk = { path = "../tonic-perps-sdk" }
+
+paste = "1.0.11"
+
+[dev-dependencies]
+proptest = "1.0.0"
+proptest-derive = "0.3.0"

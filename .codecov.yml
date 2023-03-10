@@ -1,0 +1,34 @@
+coverage:
+  range: 50..90
+  round: down
+  precision: 2
+  status:
+    project:
+      default: off
+      tonic-perps:
+        target: 60%
+        flags:
+          - tonic-perps
+      tonic-perps-sdk:
+        target: 0%
+        flags:
+          - tonic-perps-sdk
+      tonic-perps-indexer:
+        target: 0%
+        flags:
+          - tonic-perps-indexer
+    patch: off
+github_checks:
+  annotations: false
+flags:
+  tonic-perps:
+    paths:
+      - crates/tonic-perps
+  tonic-perps-sdk:
+    paths:
+      - crates/tonic-perps-sdk
+  tonic-perps-indexer:
+    paths:
+      - crates/tonic-perps-indexer
+ignore:
+  - "crates/*/tests/*"

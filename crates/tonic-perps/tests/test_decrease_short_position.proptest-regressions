@@ -1,0 +1,10 @@
+# Seeds for failure cases proptest has generated in the past. It is
+# automatically read and these particular cases re-run before any
+# novel cases are generated.
+#
+# It is recommended to check this file in to source control so that
+# everyone who runs the test benefits from these saved cases.
+cc 970b1e288c9c203dab0d2dc6aaf85ce31f58ac21e684d967b91493ec0837faa9 # shrinks to decrease_position_size = 0, collateral_amount = 42552201, second_price = 5808195, margin_fee_bps = 6
+cc dc0ff7854f297d44ba8bd036704567cb4bbaee19bf01cac2b75a5ce1b314e093 # shrinks to decrease_position_size = 0, collateral_amount = 37390681, second_price = 5937233, margin_fee_bps = 6
+cc b753822475289c9c07a8f5288f9d4483655a96e495da88777e0a64a58624dbd6 # shrinks to decrease_position_size = 0, collateral_amount = 36294641, second_price = 5966634, margin_fee_bps = 2
+cc d7fb9e81a98db94dff7cb545dd2a834f187e1ee3b6f1b660c40caa61ce0f6605 # shrinks to decrease_position_size = 0, collateral_amount = 36508241, second_price = 5955794, margin_fee_bps = 13

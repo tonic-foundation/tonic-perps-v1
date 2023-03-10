@@ -1,0 +1,7 @@
+# Seeds for failure cases proptest has generated in the past. It is
+# automatically read and these particular cases re-run before any
+# novel cases are generated.
+#
+# It is recommended to check this file in to source control so that
+# everyone who runs the test benefits from these saved cases.
+cc d6ae472cffc5e126aff9237191e4320c566a0da959dc61127e3b5c9bc1e33360 # shrinks to swap_iteration = 5, swap_amount_near = 1000000000000000000000000, first_price = 1000000, swap_fee_bps = 1

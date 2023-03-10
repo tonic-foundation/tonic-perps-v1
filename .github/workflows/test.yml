@@ -1,0 +1,175 @@
+name: Check, test and build
+on: [push]
+run-name: Check, test and build branch `${{ github.ref_name }}` by @${{ github.actor }}
+jobs:
+  fmt:
+    name: Check code style
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Install latest wasm32
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          components: rustfmt
+      - name: Run `cargo fmt`
+        uses: actions-rs/cargo@v1
+        with:
+          command: fmt
+  tonic-perps:
+    name: Check and test `tonic-perps`
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - name: Install ava
+        run: npm i ava
+      - name: Install latest wasm32
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          target: wasm32-unknown-unknown
+      - name: Install latest x86_64
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          target: x86_64-unknown-linux-gnu
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: ${{ runner.os }}-cargo-tonic-perps-${{ hashFiles('**/Cargo.toml') }}
+      - name: Check
+        uses: actions-rs/cargo@v1
+        with:
+          command: check
+          args: -p tonic-perps --target wasm32-unknown-unknown
+      - name: Test
+        uses: actions-rs/cargo@v1
+        with:
+          command: test
+          args: -p tonic-perps
+      - name: Run intergartion tests
+        run: npm run test:integration:ts
+      - name: Build for wasm
+        uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: --target wasm32-unknown-unknown --release -p tonic-perps
+      - name: Upload wasm binary
+        if: ${{ github.ref_name == 'master' }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: tonic_perps.wasm
+          path: target/wasm32-unknown-unknown/release/tonic_perps.wasm
+  tonic-perps-sdk:
+    name: Check and test `tonic-perps-sdk`
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Install latest wasm32
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          target: wasm32-unknown-unknown
+      - name: Install latest x86_64
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          target: x86_64-unknown-linux-gnu
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: ${{ runner.os }}-cargo-tonic-perps-sdk-${{ hashFiles('**/Cargo.toml') }}
+      - name: Check
+        uses: actions-rs/cargo@v1
+        with:
+          command: check
+          args: -p tonic-perps-sdk --target wasm32-unknown-unknown
+      - name: Test
+        uses: actions-rs/cargo@v1
+        with:
+          command: test
+          args: -p tonic-perps-sdk
+  tonic-perps-indexer:
+    name: Check and test `tonic-perps-indexer`
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Install latest x86_64
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          target: x86_64-unknown-linux-gnu
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: ${{ runner.os }}-cargo-tonic-perps-indexer-${{ hashFiles('**/Cargo.toml') }}
+      - name: Check
+        uses: actions-rs/cargo@v1
+        with:
+          command: check
+          args: -p tonic-perps-indexer --target x86_64-unknown-linux-gnu
+      - name: Test
+        uses: actions-rs/cargo@v1
+        with:
+          command: test
+          args: -p tonic-perps-indexer --target x86_64-unknown-linux-gnu
+  codecov:
+    name: Upload coverage to codecov
+    runs-on: ubuntu-latest
+    env:
+      CARGO_INCREMENTAL: 0
+      RUSTFLAGS: "-Zprofile -Ccodegen-units=1 -Copt-level=0 -Clink-dead-code -Coverflow-checks=off -Zpanic_abort_tests -Cpanic=abort"
+      RUSTDOCFLAGS: "-Cpanic=abort"
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Install latest x86_64
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: nightly
+          override: true
+          target: x86_64-unknown-linux-gnu
+      - name: Install grcov
+        run: cargo install grcov
+      - name: Build
+        run: cargo build
+      - name: Test
+        run: cargo test
+      - name: Run `grcov`
+        run: grcov . -s . -t lcov --branch --ignore-not-existing -o ./lcov.info
+      - name: Upload to codecov
+        uses: codecov/codecov-action@v3.1.0
+        with:
+          token: ${{secrets.CODECOV_TOKEN}}
+          verbose: true
+          fail_ci_if_error: true

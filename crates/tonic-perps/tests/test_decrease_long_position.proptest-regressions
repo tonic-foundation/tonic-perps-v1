@@ -1,0 +1,14 @@
+# Seeds for failure cases proptest has generated in the past. It is
+# automatically read and these particular cases re-run before any
+# novel cases are generated.
+#
+# It is recommended to check this file in to source control so that
+# everyone who runs the test benefits from these saved cases.
+cc a2311d13f0f591abb896946fce19007695c434f30a4e0ab76ee872a4a19224d2 # shrinks to decrease_position_size = 0, collateral_amount = 0, second_price = 4000000, margin_fee_bps = 0
+cc 04123881533af89ec10644c738423d6c5c08fef22ca2af02bf7f170d40cec96f # shrinks to decrease_position_size = 0, collateral_amount = 0, second_price = 4000000, margin_fee_bps = 0
+cc f4a1f7b1f2bd1e03903fd9c714a9608a6d63c74dd61f6f664eb87a755f80160d # shrinks to decrease_position_size = 0, collateral_amount = 0, second_price = 4000000, margin_fee_bps = 0
+cc a07de543d0607a87608082bb3f9bdd76bc22db79b6063100ac965da4d3f5f5be # shrinks to decrease_position_size = 0, collateral_amount = 47325721, second_price = 4000000, margin_fee_bps = 0
+cc c7fb7539d97a5b6b0c555c8d227754fb7ae11ba0523eef9ca034aafb794785c7 # shrinks to decrease_position_size = 0, collateral_amount = 45292351, second_price = 4000000, margin_fee_bps = 0
+cc c9ec7e9c408f38a25935a7d9a10391d0cdee51dfc86e87c5f0f1c391f8a4d8b4 # shrinks to swap_iteration = 5, decrease_position_size = 10000000, collateral_amount = 5000000, first_price = 5428584, second_price = 4000000
+cc 5cb677d0dcacf915105f8372705a375d5face70c3c0c6767c2cebcc4ab8f5b8a # shrinks to swap_iteration = 5, decrease_position_size = 10000000, collateral_amount = 5000000, first_price = 4000000, second_price = 4000000
+cc 289df1c79c84ee1acaf5de47799e7af0b8d2c3a336e8ba09049e581a2c978fec # shrinks to swap_iteration = 5, decrease_position_size = 10000000, collateral_amount = 5000000, first_price = 4000000, second_price = 4000000
