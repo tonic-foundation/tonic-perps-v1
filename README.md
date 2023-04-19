@@ -6,6 +6,17 @@ The contract is deployed by the Tonic team at the following address :
 `v1.tonic-perps.near`. It is also accessible through a [web
 interface](https://perps.tonic.foundation/trade).
 
+## TOC
+
+- [Features](#features)
+- [Documentation](#documentation)
+- [Setup](#setup)
+    - [1. Building](#1-building)
+    - [2. Deploying](#2-deploying)
+    - [3. Initialization](#3-initialization)
+    - [4. Usage](#4-usage)
+- [Setting up the indexer](#setting-up-the-indexer)
+
 ## Features
 
 - Short/Long positions
