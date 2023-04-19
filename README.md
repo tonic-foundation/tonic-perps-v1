@@ -1,206 +1,152 @@
-# Status Message
+# Tonic Perps V1 - NEAR perpetuals trading
 
-[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/near-examples/rust-status-message)
+Toinc perps is a perpetual exchange built on NEAR.
 
-<!-- MAGIC COMMENT: DO NOT DELETE! Everything above this line is hidden on NEAR Examples page -->
+The contract is deployed by the Tonic team at the following address :
+`v1.tonic-perps.near`. It is also accessible through a [web
+interface](https://perps.tonic.foundation/trade).
 
-This smart contract saves and records the status messages of NEAR accounts that call it.
+## Features
 
-Windows users: please visit the [Windows-specific README file](README-Windows.md).
+- Short/Long positions
+- Leveraged positions
+- Referrals
+- Triggers and limit orders
+- Fees and rewards
 
-## Prerequisites
+## Documentation
 
-Ensure `near-cli` is installed by running:
+You can find documentation about this contract
+[here](https://docs.tonic.foundation/developers/perps-reference).
 
-```
-near --version
-```
+## Setup
 
-If needed, install `near-cli`:
+It is recommended to install the [just] utility in order to deploy the
+contract. If you do not wish to do so, you can enter the commands from the
+[Justfile](https://github.com/tonic-foundation/tonic-perps-v1/blob/master/Justfile)
+manually.
 
-```
-npm install near-cli -g
-```
-
-Ensure `Rust` is installed by running:
-
-```
-rustc --version
-```
-
-If needed, install `Rust`:
-
-```
-curl https://sh.rustup.rs -sSf | sh
-```
-
-Install dependencies
-
-```
-npm install
-```
-
-## Quick Start
-
-To run this project locally:
-
-1. Prerequisites: Make sure you have Node.js ≥ 12 installed (https://nodejs.org), then use it to install yarn: `npm install --global yarn` (or just `npm i -g yarn`)
-2. Run the local development server: `yarn && yarn dev` (see package.json for a full list of scripts you can run with yarn)
-   Now you'll have a local development environment backed by the NEAR TestNet! Running yarn dev will tell you the URL you can visit in your browser to see the app.
-
-## Building this contract
-
-To make the build process compatible with multiple operating systems, the build process exists as a script in `package.json`.
-There are a number of special flags used to compile the smart contract into the wasm file.
-Run this command to build and place the wasm file in the `res` directory:
+You'll also need the NEAR CLI utility. You can install it using :
 
 ```bash
-npm run build
+npm install -g near-cli
 ```
 
-**Note**: Instead of `npm`, users of [yarn](https://yarnpkg.com) may run:
+You will also have to create an account. You can find more information about
+the NEAR blockchain and how to use it [here](https://docs.near.org/).
+
+### 1. Building
+
+If you do not have rust installed, you need to install it :
 
 ```bash
-yarn build
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 ```
 
-### Important
+(this command is from the [official rust install
+documentation](https://www.rust-lang.org/learn/get-started)).
 
-If you encounter an error similar to:
-
-> note: the `wasm32-unknown-unknown` target may not be installed
-
-Then run:
+Then, you'll need the `wasm32-unknown-unknown` target. To install it, use :
 
 ```bash
 rustup target add wasm32-unknown-unknown
 ```
 
-## Using this contract
-
-### Web app
-
-Deploy the smart contract to a specific account created with the NEAR Wallet. Then interact with the smart contract using near-api-js on the frontend.
-
-If you do not have a NEAR account, please create one with [NEAR Wallet](https://wallet.testnet.near.org).
-
-Make sure you have credentials saved locally for the account you want to deploy the contract to. To perform this run the following `near-cli` command:
-
-```
-near login
-```
-
-Deploy the contract to your NEAR account:
+Once that is done, you can build the contract :
 
 ```bash
-near deploy --wasmFile res/status_message.wasm --accountId YOUR_ACCOUNT_NAME
+cargo build --target wasm32-unknown-unknown --release -p tonic-perps
 ```
 
-Build the frontend:
+This command will build the contract for `wasm32-unknown-unknown` in release
+mode.
+
+### 2. Deploying
+
+For the puproses of this tutorial, we will deploy to `testnet`, but deploying
+to `mainnet` is quite similar.
 
 ```bash
-npm start
+near dev-deploy --wasmFile target/wasm32-unknown-unknown/release/near_contract.wasm
 ```
 
-If all is successful the app should be live at `localhost:1234`!
-
-### Quickest deploy
-
-Build and deploy this smart contract to an development account. This development account will be created automatically and is not intended to be permanent. Please see the "Standard deploy" section for creating a more personalized account to deploy to.
+This command will return a contract address. You can export it using :
 
 ```bash
-near dev-deploy --wasmFile res/status_message.wasm --helperUrl https://near-contract-helper.onrender.com
+export TONIC_CONTRACT_ID="<the address>"
 ```
 
-Behind the scenes, this is creating an account and deploying a contract to it. On the console, notice a message like:
+### 3. Initialization
 
-> Done deploying to dev-1234567890123
-
-In this instance, the account is `dev-1234567890123`. A file has been created containing the key to the account, located at `neardev/dev-account`. To make the next few steps easier, we're going to set an environment variable containing this development account id and use that when copy/pasting commands.
-Run this command to the environment variable:
+You will also have to set some other environment variables before calling the
+contract :
 
 ```bash
-source neardev/dev-account.env
+export ACCOUNT_ID="<your account address>"
 ```
 
-You can tell if the environment variable is set correctly if your command line prints the account name after this command:
+You should not change the name of this variables, otherwise the `just` commands
+will not work.
+
+To actually initialize the contract, run :
 
 ```bash
-echo $CONTRACT_NAME
+just init-dex
 ```
 
-The next command will call the contract's `set_status` method:
+You should now have an initialized and deployed contract.
+
+You can find [here](https://github.com/tonic-foundation/tonic-ops) other
+add-ons like bots and monitoring that will help you run the contract. The
+oracle bot is especially useful if you want to use the contract.
+
+### 4. Usage
+
+One simple way to use it is by deploying the [official web
+interface](https://github.com/tonic-foundation/tonic-perps-app).
+
+You can also manually call contract methods using the NEAR CLI. There are also
+some `just` shortcuts to call some basic contract functions like
+increasing/decreasing positions.
+
+## Setting up the indexer
+
+The indexer is a core part of the project, and needs to be set up in order for
+the API and the web UI to work. To do so, you first have to install the
+`diesel` CLI :
 
 ```bash
-near call $CONTRACT_NAME set_status '{"message": "aloha!"}' --accountId $CONTRACT_NAME
+cargo install diesel_cli --no-default-features --features postgres
 ```
 
-To retrieve the message from the contract, call `get_status` with the following:
+You can learn more about `diesel` [here](https://diesel.rs/).
+
+Create a Postgres database and export the URL to the latter :
 
 ```bash
-near view $CONTRACT_NAME get_status '{"account_id": "'$CONTRACT_NAME'"}'
+export DATABASE_URL=postgres://username:password@host/database
 ```
 
-### Standard deploy
-
-In this option, the smart contract will get deployed to a specific account created with the NEAR Wallet.
-
-If you do not have a NEAR account, please create one with [NEAR Wallet](https://wallet.testnet.near.org).
-
-Make sure you have credentials saved locally for the account you want to deploy the contract to. To perform this run the following `near-cli` command:
+Finally, build and run the indexer :
 
 ```
-near login
+cargo run --release -p tonic-perps-indexer -- run -n testnet --contract-id $TONIC_CONTRACT_ID --from-blockheight <block_height>
 ```
 
-Deploy the contract:
+It is recommended to use the block height of the transaction that deployed your
+contract for the `--from-blockheight` argument in order to have the full
+history of events in your database. Partial data may lead to bugs.
+
+You can also replace `testnet` with `mainnet` if you are running the contract
+on `mainnet`.
+
+There is also a `just` shortcut (but it does not run in release mode so it's a
+little bit slower) :
 
 ```bash
-near deploy --wasmFile res/status_message.wasm --accountId YOUR_ACCOUNT_NAME
+just start-indexer [block_height]
 ```
 
-Set a status for your account:
-
-```bash
-near call YOUR_ACCOUNT_NAME set_status '{"message": "aloha friend"}' --accountId YOUR_ACCOUNT_NAME
-```
-
-Get the status:
-
-```bash
-near view YOUR_ACCOUNT_NAME get_status '{"account_id": "YOUR_ACCOUNT_NAME"}'
-```
-
-Note that these status messages are stored per account in a `HashMap`. See `src/lib.rs` for the code. We can try the same steps with another account to verify.
-**Note**: we're adding `NEW_ACCOUNT_NAME` for the next couple steps.
-
-There are two ways to create a new account:
-
-- the NEAR Wallet (as we did before)
-- `near create_account NEW_ACCOUNT_NAME --masterAccount YOUR_ACCOUNT_NAME`
-
-Now call the contract on the first account (where it's deployed):
-
-```bash
-near call YOUR_ACCOUNT_NAME set_status '{"message": "bonjour"}' --accountId NEW_ACCOUNT_NAME
-```
-
-```bash
-near view YOUR_ACCOUNT_NAME get_status '{"account_id": "NEW_ACCOUNT_NAME"}'
-```
-
-Returns `bonjour`.
-
-Make sure the original status remains:
-
-```bash
-near view YOUR_ACCOUNT_NAME get_status '{"account_id": "YOUR_ACCOUNT_NAME"}'
-```
-
-## Testing
-
-To test run:
-
-```bash
-cargo test --package status-message -- --nocapture
-```
+**If running from another terminal, do not forget to re-export the
+$TONIC_CONTRACT_ID variable.** When using `just`, it is usually recommended to
+have `DATABASE_URL`, `TONIC_CONTRACT_ID` and `ACCOUNT_ID` exported.
