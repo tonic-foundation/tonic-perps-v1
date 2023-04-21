@@ -28,6 +28,6 @@ rand = { version = "0.8.5" }
 # diesel, turn on datetime serde, postgres, and r2d2 pooling support
 chrono = "0.4.23"
 diesel = { version = "2.0.0", features = ["chrono", "postgres", "r2d2"] }
-diesel-derive-enum = { version = "2.0.0-rc.0", features = ["postgres"] }
+diesel-derive-enum = { version = "2.0.1", features = ["postgres"] }
 
 tonic-perps-sdk = { path = "../tonic-perps-sdk" }

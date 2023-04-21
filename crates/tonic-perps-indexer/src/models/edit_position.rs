@@ -13,7 +13,7 @@ use crate::schema::*;
 use super::util::*;
 
 #[derive(Debug, diesel_derive_enum::DbEnum)]
-#[DieselTypePath = "crate::schema::perp_event::sql_types::EditPositionDirection"]
+#[ExistingTypePath = "crate::schema::perp_event::sql_types::EditPositionDirection"]
 pub enum DbEditPositionDirection {
     // these exact names matter
     Increase,
@@ -30,7 +30,7 @@ impl From<DexEditPositionDirection> for DbEditPositionDirection {
 }
 
 #[derive(Debug, diesel_derive_enum::DbEnum)]
-#[DieselTypePath = "crate::schema::perp_event::sql_types::EditPositionState"]
+#[ExistingTypePath = "crate::schema::perp_event::sql_types::EditPositionState"]
 pub enum DbEditPositionState {
     // these exact names matter
     Created,
