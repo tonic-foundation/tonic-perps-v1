@@ -138,6 +138,12 @@ Create a Postgres database and export the URL to the latter :
 export DATABASE_URL=postgres://username:password@host/database
 ```
 
+Once this is done, go to `crates/tonic-perps-indexer` and run:
+
+```bash
+diesel setup
+```
+
 Finally, build and run the indexer :
 
 ```
