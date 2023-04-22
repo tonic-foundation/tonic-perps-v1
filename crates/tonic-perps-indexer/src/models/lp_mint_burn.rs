@@ -8,7 +8,7 @@ use crate::schema;
 use crate::schema::*;
 
 #[derive(Debug, diesel_derive_enum::DbEnum)]
-#[DieselTypePath = "crate::schema::perp_event::sql_types::MintBurnDirection"]
+#[ExistingTypePath = "crate::schema::perp_event::sql_types::MintBurnDirection"]
 pub enum DbMintBurnDirection {
     // these exact names matter
     Mint,
